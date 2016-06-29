@@ -8,19 +8,20 @@ namespace tp7_simulacion.domain
 {
     public class simulacion_catalogacion
     {
+        public double TIME { get; set; }
+
+        public double TPLL { get; set; }
         public List<double> TPSJ { get; set; }
         public List<double> TPSS { get; set; }
+
+        public double HV = 999999999999999; // Son 15 nueves.
 
         public List<int> SolicitudesJuniorNormales { get; set; }
         public List<int> SolicitudesSeniorNormales { get; set; }
 
         public List<int> JuniorsSolicitudesRespondidas { get; set; }
         public List<int> SeniorsSolicitudesConsultadas { get; set; }
-
-        public double TPLL { get; set; }
-        public double TIME { get; set; }
-        public double HV = 999999999999999; // Son 15 nueves.
-
+ 
         public List<string> IndicadoresOperacionJunior { get; set; }
         public List<string> IndicadoresOperacionSenior { get; set; }
 
@@ -53,11 +54,11 @@ namespace tp7_simulacion.domain
                 else
                     this.simularLlegada();
             }
-
         }
 
         public void setInitialConditions()
         {
+            // TODO: Implementar
             this.TPSJ[10] = 100;
         }
 
@@ -84,12 +85,12 @@ namespace tp7_simulacion.domain
 
         public void simularSalidaJunior()
         {
-
+            // TODO: Implementar
         }
 
         public void simularSalidaSenior()
         {
-
+            // TODO: Implementar
         }
 
         public int obtenerJuniorConMenorCantidadDeSolicitudesNormales()
