@@ -21,7 +21,7 @@ namespace tp7_simulacion.domain
         public List<int> SolicitudesSeniorNormales { get; set; }
 
         public List<int> JuniorsSolicitudesRespondidas { get; set; }
-        public List<int> SeniorsSolicitudesConsultadas { get; set; }
+        public List<Consulta> SeniorsSolicitudesConsultadas { get; set; }
  
         public List<string> IndicadoresOperacionJunior { get; set; }
         public List<string> IndicadoresOperacionSenior { get; set; }
@@ -35,6 +35,8 @@ namespace tp7_simulacion.domain
         List<double> sumatoriaTiempoOciosoJuniors;
         List<double> sumatoriaTiempoOciosoSeniors;
 
+        private Random generadorRandoms = new Random();
+
         public void simular()
         {
             do
@@ -43,17 +45,20 @@ namespace tp7_simulacion.domain
                 var menorTPSJ = this.TPSJ.Min();
                 var menorTPSS = this.TPSS.Min();
 
+                var juniorConMenorTPS = this.TPSJ.FindIndex(j => j == menorTPSJ);
+                var seniorConMenorTPS = this.TPSS.FindIndex(s => s == menorTPSS);
+       
                 if (menorTPSJ <= menorTPSS)
                 {
                     if (menorTPSJ <= this.TPLL)
-                        this.simularSalidaJunior();
+                        this.simularSalidaJunior(juniorConMenorTPS);
                     else
                         this.simularLlegada();
                 }
                 else
                 {
                     if (menorTPSS <= this.TPLL)
-                        this.simularSalidaSenior();
+                        this.simularSalidaSenior(seniorConMenorTPS);
                     else
                         this.simularLlegada();
                 }
@@ -90,12 +95,63 @@ namespace tp7_simulacion.domain
 
         }
 
-        public void simularSalidaJunior()
+        public void simularSalidaJunior(int _junior)
         {
-            // TODO: Implementar
+            this.TIME = this.TPSJ[_junior];
+            if(this.IndicadoresOperacionJunior[_junior] == "Normal")
+            {
+                this.SolicitudesJuniorNormales[_junior] = this.SolicitudesJuniorNormales[_junior] - 1;
+                var rand = this.generarRandom();
+
+                if (rand <= 0.2) // Se mandar a consultar
+                {
+                    var seniorASerConsultado = this.getSeniorConMenosConsultas();
+                    this.SeniorsSolicitudesConsultadas[seniorASerConsultado].Cantidad = this.SeniorsSolicitudesConsultadas[seniorASerConsultado].Cantidad + 1;
+                    this.SeniorsSolicitudesConsultadas[seniorASerConsultado].JuniorsConsultantes.Add(_junior);
+
+                    if(this.SeniorsSolicitudesConsultadas[seniorASerConsultado].Cantidad == 1 && (this.TPSS[seniorASerConsultado] == this.HV))
+                    {
+                        this.IndicadoresOperacionSenior[seniorASerConsultado] = "Consulta";
+                        var tiempoDeAtencion = this.generarTiempoAtencionSenior();
+                        this.TPSS[seniorASerConsultado] = this.TIME + tiempoDeAtencion;
+
+                        this.sumatoriaTiempoOciosoSeniors[seniorASerConsultado] = this.sumatoriaTiempoOciosoSeniors[seniorASerConsultado] + (this.TIME - this.inicioTiempoOciosoSeniors[seniorASerConsultado]);
+                    }
+                }
+                else
+                {
+                    this.sumatoriaSalidas = this.sumatoriaSalidas + this.TIME;
+                }
+            }
+            else
+            {
+                this.JuniorsSolicitudesRespondidas[_junior] = this.JuniorsSolicitudesRespondidas[_junior] - 1;
+                this.sumatoriaSalidas = this.sumatoriaSalidas + this.TIME;
+            }
+
+            if(this.JuniorsSolicitudesRespondidas[_junior] >= 1)
+            {
+                this.IndicadoresOperacionJunior[_junior] = "Respuesta";
+                var tiempoDeATencion = this.generarTiempoAtencionJunior();
+                this.TPSJ[_junior] = this.TIME + tiempoDeATencion;
+            }
+            else
+            {
+                if (this.SolicitudesJuniorNormales[_junior] >= 1 && this.JuniorsSolicitudesRespondidas[_junior] == 0)
+                {
+                    this.IndicadoresOperacionJunior[_junior] = "Normal";
+                    var tiempoDeATencion = this.generarTiempoAtencionJunior();
+                    this.TPSJ[_junior] = this.TIME + tiempoDeATencion;
+                }
+                else
+                {
+                    this.TPSJ[_junior] = this.HV;
+                    this.inicioTiempoOciosoJuniors[_junior] = this.TIME;
+                }
+            }
         }
 
-        public void simularSalidaSenior()
+        public void simularSalidaSenior(int _senior)
         {
             // TODO: Implementar
         }
@@ -138,6 +194,17 @@ namespace tp7_simulacion.domain
                 this.TPSS[_senior] = this.TIME + tiempoAtencion;
                 this.sumatoriaTiempoOciosoSeniors[_senior] = this.sumatoriaTiempoOciosoSeniors[_senior] + (this.TIME - this.inicioTiempoOciosoSeniors[_senior]);
             }
+        }
+
+        public int getSeniorConMenosConsultas()
+        {
+            var menorCantConsultas = this.SeniorsSolicitudesConsultadas.Min();
+            return this.SeniorsSolicitudesConsultadas.FindIndex(s => s == menorCantConsultas);
+        }
+
+        public double generarRandom()
+        {
+            return this.generadorRandoms.NextDouble();
         }
 
         // ----------------------------- FDPs ------------------------------------------
