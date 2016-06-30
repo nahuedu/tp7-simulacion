@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using tp7_simulacion.domain;
 
 namespace tp7_simulacion
 {
@@ -15,6 +16,21 @@ namespace tp7_simulacion
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void btn_simular_Click(object sender, EventArgs e)
+        {
+            int cantJuniors = Convert.ToInt32(this.txtbox_cant_juniors.Text);
+            int cantSeniors = Convert.ToInt32(this.txtbox_cant_seniors.Text);
+
+            var resultado = new simulacion_catalogacion().simular(cantJuniors, cantSeniors);
+            resultado.promedioPermanenciaSistema = Math.Round(resultado.promedioPermanenciaSistema, 2);
+            resultado.porcentajeGeneralTOJ = Math.Round(resultado.porcentajeGeneralTOJ, 2);
+            resultado.porcentajeGeneralTOS = Math.Round(resultado.porcentajeGeneralTOS, 2);
+
+            this.lbl_promedio_permanencia.Text = resultado.promedioPermanenciaSistema.ToString();
+            this.lbl_ptoj.Text = resultado.porcentajeGeneralTOJ.ToString();
+            this.lbl_ptos.Text = resultado.porcentajeGeneralTOS.ToString();
         }
     }
 }

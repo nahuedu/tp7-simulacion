@@ -10,5 +10,12 @@ namespace tp7_simulacion.domain
     {
         public int Cantidad { get; set; }
         public List<int> JuniorsConsultantes { get; set; }
+
+        public Consulta() { }
+
+        public Consulta(int _cantidad)
+        {
+            this.JuniorsConsultantes = new List<int>();
+        }
     }
 }
