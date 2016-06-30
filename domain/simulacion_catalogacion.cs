@@ -9,6 +9,7 @@ namespace tp7_simulacion.domain
     public class simulacion_catalogacion
     {
         public double TIME { get; set; }
+        public double TFINAL { get; set; }
 
         public double TPLL { get; set; }
         public List<double> TPSJ { get; set; }
@@ -36,24 +37,30 @@ namespace tp7_simulacion.domain
 
         public void simular()
         {
-            this.setInitialConditions();
-            var menorTPSJ = this.TPSJ.Min();
-            var menorTPSS = this.TPSS.Min();
+            do
+            {
+                this.setInitialConditions();
+                var menorTPSJ = this.TPSJ.Min();
+                var menorTPSS = this.TPSS.Min();
 
-            if (menorTPSJ <= menorTPSS)
-            {
-                if (menorTPSJ <= this.TPLL)
-                    this.simularSalidaJunior();
+                if (menorTPSJ <= menorTPSS)
+                {
+                    if (menorTPSJ <= this.TPLL)
+                        this.simularSalidaJunior();
+                    else
+                        this.simularLlegada();
+                }
                 else
-                    this.simularLlegada();
-            }
-            else
-            {
-                if (menorTPSS <= this.TPLL)
-                    this.simularSalidaSenior();
-                else
-                    this.simularLlegada();
-            }
+                {
+                    if (menorTPSS <= this.TPLL)
+                        this.simularSalidaSenior();
+                    else
+                        this.simularLlegada();
+                }
+            } while (this.TIME <= this.TFINAL);
+
+            this.calcularResultados();
+
         }
 
         public void setInitialConditions()
@@ -147,6 +154,14 @@ namespace tp7_simulacion.domain
         public double generarTiempoAtencionSenior()
         {
             return 100; // TODO: Hacer
+        }
+
+
+        // -------------------- Calculo de Resultados --------------------
+
+        public void calcularResultados()
+        {
+
         }
     }
 }
