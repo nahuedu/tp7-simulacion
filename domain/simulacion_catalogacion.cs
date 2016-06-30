@@ -153,7 +153,52 @@ namespace tp7_simulacion.domain
 
         public void simularSalidaSenior(int _senior)
         {
-            // TODO: Implementar
+            this.TIME = this.TPSS[_senior];
+
+            if(this.IndicadoresOperacionSenior[_senior] == "Normal")
+            {
+                this.SolicitudesSeniorNormales[_senior] = this.SolicitudesSeniorNormales[_senior] - 1;
+                this.sumatoriaSalidas = this.sumatoriaSalidas + this.TIME;
+            }
+            else
+            {
+                this.SeniorsSolicitudesConsultadas[_senior].Cantidad = this.SeniorsSolicitudesConsultadas[_senior].Cantidad - 1;
+                var juniorQueConsulto = this.SeniorsSolicitudesConsultadas[_senior].JuniorsConsultantes.First();
+                this.JuniorsSolicitudesRespondidas[juniorQueConsulto] = this.JuniorsSolicitudesRespondidas[juniorQueConsulto] + 1;
+                this.SeniorsSolicitudesConsultadas[_senior].JuniorsConsultantes.RemoveAt(0);
+
+                if(this.JuniorsSolicitudesRespondidas[juniorQueConsulto] == 1 && this.TPSJ[juniorQueConsulto] == this.HV)
+                {
+                    var tiempoDeAtencion = this.generarTiempoAtencionJunior();
+                    this.TPSJ[juniorQueConsulto] = this.TIME + tiempoDeAtencion;
+                    this.IndicadoresOperacionJunior[juniorQueConsulto] = "Respuesta";
+
+                    this.sumatoriaTiempoOciosoJuniors[juniorQueConsulto] = this.sumatoriaTiempoOciosoJuniors[juniorQueConsulto] + (this.TIME - this.inicioTiempoOciosoJuniors[juniorQueConsulto]);
+                }
+
+            }
+
+            if(this.SeniorsSolicitudesConsultadas[_senior].Cantidad >= 1)
+            {
+                this.IndicadoresOperacionSenior[_senior] = "Consulta";
+                var tiempoDeAtencion = this.generarTiempoAtencionSenior();
+                this.TPSS[_senior] = this.TIME + tiempoDeAtencion;
+            }
+            else
+            {
+                if(this.SolicitudesSeniorNormales[_senior] >= 1 && this.SeniorsSolicitudesConsultadas[_senior].Cantidad == 0)
+                {
+                    this.IndicadoresOperacionSenior[_senior] = "Normal";
+                    var tiempoDeAtencion = this.generarTiempoAtencionSenior();
+                    this.TPSS[_senior] = this.TIME + tiempoDeAtencion;
+                }
+                else
+                {
+                    this.TPSS[_senior] = this.HV;
+                    this.inicioTiempoOciosoSeniors[_senior] = this.TIME;
+                }
+            }
+
         }
 
         public int obtenerJuniorConMenorCantidadDeSolicitudesNormales()
