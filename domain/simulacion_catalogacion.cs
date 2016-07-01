@@ -97,7 +97,7 @@ namespace tp7_simulacion.domain
         public void setInitialConditions(int _cantJuniors, int _cantSeniors)
         {
             this.TIME = 1;
-            this.TFINAL = 525600; // 1 año.
+            this.TFINAL = 2102400; // 4 años.
 
             this.TPLL = 1;
 
@@ -339,28 +339,36 @@ namespace tp7_simulacion.domain
         // ----------------------------- FDPs ------------------------------------------
         public double generarIntervaloEntreArribos()
         {
-            //double n1 = 3.2011;
-            //double n2 = 0.99389;
-            //var r = this.generadorRandomsIA.NextDouble();
+            double alpha = 1.1017;
+            double beta = 2.8994;
 
-            //var IA = Math.Pow(Math.E, (Math.Log(n1) - ((Math.Log((1 / r) - 1) / n2))));
+            var r = this.generarRandomEntre0y1ParaIA();
 
-            //return IA;
+            var IA = Math.Pow(Math.E, Math.Log(beta) - ( (Math.Log((1 / r) - 1) / alpha)) );
 
-            var ta = this.generadorRandoms.Next(1, 15);
-            return ta;
+            return IA;
+        }
 
+        private double generarRandomEntre0y1ParaIA()
+        {
+            var max = 0.9;
+
+            var r = this.generadorRandomsIA.NextDouble();
+            while (r > max)
+                r = this.generadorRandoms.NextDouble();
+
+            return r;
         }
 
         public double generarTiempoAtencionJunior()
         {
-            var ta = this.generadorRandoms.Next(10, 40);
+            var ta = this.generadorRandoms.Next(5, 20);
             return ta;
         }
 
         public double generarTiempoAtencionSenior()
         {
-            var ta = this.generadorRandoms.Next(5, 25);
+            var ta = this.generadorRandoms.Next(2, 15);
             return ta;
         }
 

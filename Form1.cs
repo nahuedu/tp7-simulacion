@@ -24,9 +24,9 @@ namespace tp7_simulacion
             int cantSeniors = Convert.ToInt32(this.txtbox_cant_seniors.Text);
 
             var resultado = new simulacion_catalogacion().simular(cantJuniors, cantSeniors);
-            resultado.promedioPermanenciaSistema = Math.Round(resultado.promedioPermanenciaSistema, 2);
-            resultado.porcentajeGeneralTOJ = Math.Round(resultado.porcentajeGeneralTOJ, 2);
-            resultado.porcentajeGeneralTOS = Math.Round(resultado.porcentajeGeneralTOS, 2);
+            resultado.promedioPermanenciaSistema = Math.Round(resultado.promedioPermanenciaSistema);
+            resultado.porcentajeGeneralTOJ = Math.Round(resultado.porcentajeGeneralTOJ);
+            resultado.porcentajeGeneralTOS = Math.Round(resultado.porcentajeGeneralTOS);
 
             this.lbl_promedio_permanencia.Text = resultado.promedioPermanenciaSistema.ToString();
             this.lbl_ptoj.Text = resultado.porcentajeGeneralTOJ.ToString();
